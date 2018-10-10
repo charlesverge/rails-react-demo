@@ -5,5 +5,5 @@ Rails.application.routes.draw do
 
   root 'classify_text#index'
 
-  get 'classify', to: 'classify_text#classify'
+  post 'classify', to: 'classify_text#classify'
 end

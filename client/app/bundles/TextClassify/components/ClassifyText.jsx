@@ -21,6 +21,9 @@ export default class TextClassify extends React.Component {
       result: null,
       loading: false,
     };
+    // Set csrf token to allow for post requests in rails 5.
+    const csrfToken = document.querySelector('[name="csrf-token"]').content;
+    axios.defaults.headers.common['X-CSRF-Token'] = csrfToken;
   }
 
   updateText = (text) => {
@@ -28,19 +31,22 @@ export default class TextClassify extends React.Component {
   };
 
   classify() {
-     // Call api.
-     // Update view.
-     axios.get('/classify')
-       .then(result => {
-         this.setState({
-           loading: false,
-           result: result.data.labels,
-         });
-       })
-       .catch(error => this.setState({
-         result: "Error loading",
-         loading: false,
-        }));
+    // Call api.
+    // Update view.
+    axios.post('/classify', {
+        text: this.state.text,
+        model: this.state.model,
+      })
+      .then(result => {
+        this.setState({
+          loading: false,
+          result: result.data.labels,
+        });
+      })
+      .catch(error => this.setState({
+        result: "Error loading",
+        loading: false,
+      }));
   }
 
   render() {
