@@ -8,10 +8,13 @@ export default class ClassifyResult extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  static getDerivedStateFromProps(nextProps, prevState) {
     if (nextProps.result) {
-      this.setState({ result: nextProps.result });
+      return { result: nextProps.result };
     }
+    return {
+      result: null,
+    };
   }
 
   render() {
