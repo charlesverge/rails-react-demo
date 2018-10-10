@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import axios from 'axios';
+import ClassifyResult from './ClassifyResult';
 
 export default class TextClassify extends React.Component {
   static propTypes = {
@@ -16,6 +18,8 @@ export default class TextClassify extends React.Component {
     this.state = {
       model: this.props.model,
       text: this.props.text,
+      result: null,
+      loading: false,
     };
   }
 
@@ -26,7 +30,17 @@ export default class TextClassify extends React.Component {
   classify() {
      // Call api.
      // Update view.
-     this.setState({ result: "Result text"});
+     axios.get('/classify')
+       .then(result => {
+         this.setState({
+           loading: false,
+           result: result.data.labels,
+         });
+       })
+       .catch(error => this.setState({
+         result: "Error loading",
+         loading: false,
+        }));
   }
 
   render() {
@@ -46,7 +60,7 @@ export default class TextClassify extends React.Component {
         </form>
         <button onClick={() => this.classify()}>Classify</button>
         <hr />
-        <div>{this.state.result}</div>
+        <div><ClassifyResult result={this.state.result} /></div>
       </div>
     );
   }

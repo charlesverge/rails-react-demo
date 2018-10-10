@@ -6,7 +6,9 @@ class ClassifyTextController < ApplicationController
     }
   end
   def classify
-    result = ["business type 1", "business type 2"]
+    result = {
+      labels: ["business type 1", "business type 2"],
+    }
     json_response(result)
   end
 end
