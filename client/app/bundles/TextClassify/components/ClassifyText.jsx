@@ -86,28 +86,36 @@ class TextClassify extends React.Component {
 
   render() {
     return (
-      <div className="ClassifyText">
-        <h3>
-          You selected model is: {this.state.model}
-        </h3>
-        <hr />
-        <form >
-          <textarea
-            id="text"
-            type="text"
-            value={this.state.text}
-            onChange={(e) => this.updateText(e.target.value)}
-          />
-        </form>
-        <hr />
-        <b>{this.state.error}</b>
-        <div><ClassifyResult
-          result={this.state.result}
-          loading={this.state.loading}
-          error={this.state.error}
-        /></div>
+      <div className="ClassifyText container pt-3">
+        <h1 className="text-center">Classify text</h1>
+        <div className="row">
+          <div className="col-md-2"></div>
+          <div className="col-md-8">
+            <p>Enter your text to be classified in the box bellow</p>
+            <hr />
+            <form>
+              <div className="form-group">
+                <textarea
+                className="form-control"
+                id="text"
+                rows="10"
+                type="text"
+                value={this.state.text}
+                onChange={(e) => this.updateText(e.target.value)}
+              />
+              </div>
+            </form>
+            <hr />
+            <b>{this.state.error}</b>
+            <div><ClassifyResult
+              result={this.state.result}
+              loading={this.state.loading}
+              error={this.state.error}
+            /></div>
+          </div>
+          <div className="col-md-2"></div>
       </div>
-    );
+    </div>);
   }
 }
 

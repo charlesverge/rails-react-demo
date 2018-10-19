@@ -68,3 +68,5 @@ gem 'curb'
 
 gem 'redis'
 gem 'redis-namespace'
+gem 'bootstrap'
+gem 'jquery-rails'
