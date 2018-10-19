@@ -19,7 +19,8 @@ export default class ClassifyResult extends React.Component {
 
   render() {
     if (this.state.result) {
-      let items = this.state.result.map(item => <li key={item}>{item}</li>);
+      let items = this.state.result
+          .map(item => <li key={item.label}>{item.prob}% {item.label}</li>);
       return <div><h3>Results</h3><ul>{items}</ul></div>;
     }
     return null;

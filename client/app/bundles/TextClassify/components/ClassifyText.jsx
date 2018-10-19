@@ -19,6 +19,7 @@ export default class TextClassify extends React.Component {
       model: this.props.model,
       text: this.props.text,
       result: null,
+      error: false,
       loading: false,
     };
     // Set csrf token to allow for post requests in rails 5.
@@ -41,10 +42,12 @@ export default class TextClassify extends React.Component {
         this.setState({
           loading: false,
           result: result.data.labels,
+          error: false,
         });
       })
       .catch(error => this.setState({
-        result: "Error loading",
+        result: null,
+        error: "Error loading",
         loading: false,
       }));
   }
@@ -66,6 +69,7 @@ export default class TextClassify extends React.Component {
         </form>
         <button onClick={() => this.classify()}>Classify</button>
         <hr />
+        <b>{this.state.error}</b>
         <div><ClassifyResult result={this.state.result} /></div>
       </div>
     );

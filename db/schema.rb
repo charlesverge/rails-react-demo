@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_09_204832) do
+ActiveRecord::Schema.define(version: 2018_10_17_161026) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 2018_10_09_204832) do
     t.text "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "model"
   end
 
   create_table "classifieds_labels", id: false, force: :cascade do |t|
@@ -39,11 +40,21 @@ ActiveRecord::Schema.define(version: 2018_10_09_204832) do
     t.string "label"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "model"
+    t.integer "label_id"
   end
 
   create_table "todos", force: :cascade do |t|
     t.string "title"
     t.string "created_by"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "words", force: :cascade do |t|
+    t.integer "word_id"
+    t.string "model"
+    t.string "word"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

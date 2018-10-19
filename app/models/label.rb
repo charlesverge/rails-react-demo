@@ -1,3 +1,3 @@
 class Label < ApplicationRecord
-  has_and_belongs_to_many :classified
+  has_and_belongs_to_many :classifieds
 end
