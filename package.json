@@ -3,11 +3,12 @@
   "version": "0.0.1",
   "private": true,
   "engines": {
-    "node": "",
-    "npm": "4.1.1"
+    "node": "v6.14.4",
+    "npm": "4.1.1",
+    "yarn": "1.10.1"
   },
   "scripts": {
-    "postinstall": "cd client && yarn install",
+    "postinstall": "cd client && npm install",
     "rails-server": "echo 'visit http://localhost:3000/hello_world' && foreman start -f Procfile.dev",
     "test": "rspec"
   }
