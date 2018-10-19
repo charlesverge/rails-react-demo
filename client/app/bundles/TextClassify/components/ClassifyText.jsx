@@ -34,20 +34,31 @@ export default class TextClassify extends React.Component {
   classify() {
     // Call api.
     // Update view.
+    this.setState({
+      loading: true,
+    });
     axios.post('/classify', {
         text: this.state.text,
         model: this.state.model,
       })
       .then(result => {
-        this.setState({
-          loading: false,
-          result: result.data.labels,
-          error: false,
-        });
+        if (result.data.status === 'error') {
+          this.setState({
+            loading: false,
+            result: null,
+            error: "Error loading results",
+          });
+        } else {
+          this.setState({
+            loading: false,
+            result: result.data.labels,
+            error: false,
+          });
+        }
       })
       .catch(error => this.setState({
         result: null,
-        error: "Error loading",
+        error: "Error loading results",
         loading: false,
       }));
   }
@@ -70,7 +81,11 @@ export default class TextClassify extends React.Component {
         <button onClick={() => this.classify()}>Classify</button>
         <hr />
         <b>{this.state.error}</b>
-        <div><ClassifyResult result={this.state.result} /></div>
+        <div><ClassifyResult
+          result={this.state.result}
+          loading={this.state.loading}
+          error={this.state.error}
+        /></div>
       </div>
     );
   }
