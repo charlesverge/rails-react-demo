@@ -16,7 +16,6 @@ class ClassifyTextController < ApplicationController
     params.require(:text)
     params.require(:model)
     begin
-      logger.debug(params)
       # Make prediction
       api = Predict::Api.new(params["model"])
       result = api.predict(params["text"])
@@ -24,9 +23,6 @@ class ClassifyTextController < ApplicationController
       # Save prediction
       classifiedentry = Classified.create(body: params["text"],
         model: params["model"])
-      logger.debug("prediction")
-      logger.debug(api.getbody)
-      logger.debug(result)
       bytop = result["outputs"]["prob"][0].each_with_index.map{ |j,i| [i,j] }.sort { |x,y| y[1] <=> x[1] }
       label = Label.where(model: params["model"],
         label_id: result["outputs"]["class"][0]).first

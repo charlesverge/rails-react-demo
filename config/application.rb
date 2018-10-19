@@ -14,10 +14,7 @@ module RailsReactDemo
     logger           = ActiveSupport::Logger.new(STDOUT)
     logger.formatter = config.log_formatter
     config.logger = ActiveSupport::TaggedLogging.new(logger)
-
-    logger.debug(config.autoload_paths)
     config.autoload_paths += %W(#{config.root}/app/services)
-    logger.debug(config.autoload_paths)
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers

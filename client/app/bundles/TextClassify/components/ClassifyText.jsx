@@ -1,14 +1,12 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import axios from 'axios';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
+import { updateText } from './reduxhelpers/actions';
+
 import ClassifyResult from './ClassifyResult';
 
-export default class TextClassify extends React.Component {
-  static propTypes = {
-    model: PropTypes.string.isRequired, // this is passed from the Rails view
-    text: PropTypes.string.isRequired,
-  };
-
+class TextClassify extends React.Component {
   /**
    * @param props - Comes from your rails view.
    * @param _railsContext - Comes from React on Rails
@@ -16,8 +14,8 @@ export default class TextClassify extends React.Component {
   constructor(props, _railsContext) {
     super(props);
     this.state = {
-      model: this.props.model,
-      text: this.props.text,
+      model: this.props.classifyStatus.model,
+      text: this.props.classifyStatus.text,
       result: null,
       error: false,
       loading: false,
@@ -28,6 +26,15 @@ export default class TextClassify extends React.Component {
   }
 
   updateText = (text) => {
+    // Classify text one second after finishing typing text.
+    if (this.updateTimeout) {
+      clearTimeout(this.updateTimeout);
+    }
+    this.updateTimeout = setTimeout(() => {
+      this.updateTimeout = false;
+      this.classify();
+    }, 1000);
+    this.props.dispatch(updateText(text));
     this.setState({ text: text });
   };
 
@@ -37,6 +44,14 @@ export default class TextClassify extends React.Component {
     this.setState({
       loading: true,
     });
+    if (!this.state.text) {
+      this.setState({
+        loading: false,
+        result: null,
+        error: "Please enter text to classify",
+      });
+      return;
+    }
     axios.post('/classify', {
         text: this.state.text,
         model: this.state.model,
@@ -63,6 +78,12 @@ export default class TextClassify extends React.Component {
       }));
   }
 
+  componentDidMount() {
+    if (this.state.text) {
+      this.classify();
+    }
+  }
+
   render() {
     return (
       <div className="ClassifyText">
@@ -78,7 +99,6 @@ export default class TextClassify extends React.Component {
             onChange={(e) => this.updateText(e.target.value)}
           />
         </form>
-        <button onClick={() => this.classify()}>Classify</button>
         <hr />
         <b>{this.state.error}</b>
         <div><ClassifyResult
@@ -90,3 +110,20 @@ export default class TextClassify extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    classifyStatus: state.classifyStatus,
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    dispatch: dispatch,
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withRouter(TextClassify));
