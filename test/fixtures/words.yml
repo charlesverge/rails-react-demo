@@ -1,11 +1,11 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  word_id: 
-  model: 
-  word: MyString
+  word_id: 1
+  model: "sector"
+  word: "testword1"
 
 two:
-  word_id: 
-  model: 
-  word: MyString
+  word_id: 2
+  model: "sector"
+  word: "testword2"

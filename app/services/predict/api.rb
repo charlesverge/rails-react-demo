@@ -22,7 +22,7 @@ module Predict
 
     def build_request(sentence)
       # Built request
-      raise ArgumentError, 'Argument is not numeric' unless sentence.is_a? String || sentence.empty?
+      raise ArgumentError, 'Argument is not a string' unless sentence.is_a? String || sentence.empty?
       tokensids = tokenize(sentence)
       data = {
           :inputs => {
@@ -80,18 +80,10 @@ module Predict
       # be stored inside a tensorflow model by using
       # tf.contrib.lookup.index_to_string_table_from_file, this would reduce
       # complexity on client and increase on the tensorflow model.
-      if id = Wordhash[@model + "__" + word]
-         return id
+      if id = Wordhash[{ model: @model, word: word}]
+        return id
       else
-        wordmodel = Word.where(:word => word, :model => @model).first
-        if wordmodel
-          # Load word into redis.
-          Wordhash[@model + "__" + word] = wordmodel.word_id
-          return wordmodel.word_id
-        else
-          # Zero repersents an unknown word.
-          return 0
-        end
+        return 0
       end
     end
   end
