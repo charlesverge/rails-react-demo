@@ -2,7 +2,13 @@ class ClassifyTextController < ApplicationController
   def index
     @props = {
       'model' => 'sector',
-      'text'  => 'Google is a multinational corporation that is specialized in internet-related services and products.',
+      'text'  => '"Google is not a conventional company We do not intend'\
+      ' to become one " That unconventional spirit has been a driving force'\
+      ' throughout our history -- inspiring us to do things like rethink the'\
+      ' mobile device ecosystem with Android and map the world with Google Maps'\
+      ' As part of that, our founders also explained that you could expect us'\
+      ' to make "smaller bets in areas that might seem very speculative or even'\
+      ' strange when compared to our current businesses'
     }
   end
 
@@ -16,12 +22,14 @@ class ClassifyTextController < ApplicationController
       result = api.predict(params["text"])
 
       # Save prediction
-      classifiedentry = Classified.create(body: params["text"], model: params["model"])
+      classifiedentry = Classified.create(body: params["text"],
+        model: params["model"])
       logger.debug("prediction")
       logger.debug(api.getbody)
       logger.debug(result)
       bytop = result["outputs"]["prob"][0].each_with_index.map{ |j,i| [i,j] }.sort { |x,y| y[1] <=> x[1] }
-      label = Label.where(model: params["model"], label_id: result["outputs"]["class"][0]).first
+      label = Label.where(model: params["model"],
+        label_id: result["outputs"]["class"][0]).first
       if label
         classifiedentry.labels << label
       else
