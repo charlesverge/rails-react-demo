@@ -28,11 +28,8 @@ class ClassifyTextController < ApplicationController
         label_id: result["outputs"]["class"][0]).first
       if label
         classifiedentry.labels << label
-      else
-        raise
       end
       labels = []
-      print(bytop)
       for x in bytop[0..2]
         label = Label.where(model: params["model"], label_id: x[0]).first
         if label
@@ -45,11 +42,11 @@ class ClassifyTextController < ApplicationController
       json_response({
         'labels': labels,
       })
-    rescue
-      json_response({
-        'labels': [],
-        'status': 'error',
-      })
+    #rescue
+    #  json_response({
+    #    'labels': [],
+    #    'status': 'error',
+    #  })
     end
   end
 end

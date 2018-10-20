@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { updateText } from './reduxhelpers/actions';
 
+import ClassificationModels from './ClassificationModels';
 import ClassifyResult from './ClassifyResult';
 
 class TextClassify extends React.Component {
@@ -18,6 +19,43 @@ class TextClassify extends React.Component {
       filter: "None",
       tokenizer: "Regex",
       model: this.props.classifyStatus.model,
+      models: [
+        {
+          name: "sector",
+          description: "Classify business descriptions into sectors"
+        },
+        {
+          name: "industry",
+          description: "Classify business descriptions into industry"
+        },
+      ],
+      filters: [
+        {
+          name: "None",
+          description: "No filter",
+        },
+        {
+          name: "Common stopwords",
+          description: "Ignore stop words like words a, is, the, are, etc..."
+        },
+        {
+          name: "Strip HTML",
+          description: "Strip html"},
+        {
+          name: "Strip Quotes",
+          description: "Replace quotes with spaces"
+        },
+      ],
+      tokenizers: [
+        {
+          name: "Regex",
+          description: "Use regex pattern /[A-Z]{2,}(?![a-z])|[A-Z][a-z]+(?=[A-Z])|[\'\w\-]+/ to split words"
+        },
+        {
+          name: "Simple split",
+          description: "Only split words seperated by a space"
+        },
+      ],
       result: null,
       error: false,
       loading: false,
@@ -27,6 +65,36 @@ class TextClassify extends React.Component {
     axios.defaults.headers.common['X-CSRF-Token'] = csrfToken;
   }
 
+  /**
+   * When redux passes new props, update the state.
+   * @param nextProps Next props.
+   * @param prevState Previous state.
+   */
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (prevState.model == nextProps.classifyStatus.model) {
+      return null;
+    } else {
+      return {
+        model: nextProps.classifyStatus.model,
+      };
+    }
+  }
+
+  /**
+   * Component did update, check to see if state has changed, if so classify text.
+   * @param prevProps Previous props.
+   * @param prevState Previous state before update.
+   */
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.model !== this.state.model) {
+      this.classify();
+    }
+  }
+
+  /**
+   * Update text and classify after one second pause.
+   * @param text Text from textarea.
+   */
   updateText = (text) => {
     // Classify text one second after finishing typing text.
     if (this.updateTimeout) {
@@ -40,6 +108,9 @@ class TextClassify extends React.Component {
     this.setState({ text: text });
   };
 
+  /**
+   * Classify text with settings in state.
+   */
   classify() {
     // Call api.
     // Update view.
@@ -80,6 +151,9 @@ class TextClassify extends React.Component {
       }));
   }
 
+  /**
+   * Classify text when component mounts for the first time and draw pipes.
+   */
   componentDidMount() {
     if (this.state.text) {
       this.classify();
@@ -97,6 +171,9 @@ class TextClassify extends React.Component {
     }, 0);
   }
 
+  /**
+   * Render form and components for visualization.
+   */
   render() {
     return (
       <div className="ClassifyText container pt-3">
@@ -104,7 +181,7 @@ class TextClassify extends React.Component {
         <div className="row">
           <div className="col-md-2"></div>
           <div className="col-md-8">
-          <div className="py-5">
+          <div className="pb-5">
             <p>Enter your text to be classified in the box bellow</p>
             <hr />
             <form>
@@ -138,12 +215,10 @@ class TextClassify extends React.Component {
                 </div>
               </div>
               <div className="col-sm-4 p-4">
-                <div id="model" className="card orange0">
-                  <div className="card-body">
-                    <h5 className="card-title">Model</h5>
-                    <p className="card-text">{this.state.model}</p>
-                  </div>
-                </div>
+                <ClassificationModels
+                  models={this.state.models}
+                  model={this.state.model}
+                  dispatch={this.props.dispatch} />
               </div>
             </div>
             <div className="row pt-5">
@@ -171,12 +246,21 @@ class TextClassify extends React.Component {
   }
 }
 
+
+/**
+ * Set classifyStatus in props for ClassifyText component.
+ * @param state redux state tree.
+ */
 const mapStateToProps = (state, ownProps) => {
   return {
     classifyStatus: state.classifyStatus,
   }
 }
 
+/**
+ * Pass the dispatch function to ClassifyText component as a prop.
+ * @param dispatch Dispatch function for sending redux updates.
+ */
 const mapDispatchToProps = (dispatch) => {
   return {
     dispatch: dispatch,

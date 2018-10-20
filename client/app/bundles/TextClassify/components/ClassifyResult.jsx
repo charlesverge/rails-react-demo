@@ -1,5 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
+/**
+ * Render classification result.
+ */
 export default class ClassifyResult extends React.Component {
   constructor(props) {
     super(props);
@@ -7,6 +11,10 @@ export default class ClassifyResult extends React.Component {
       result: props.result,
       loading: props.loading,
     }
+  }
+
+  static propTypes = {
+    result: PropTypes.string.isRequired,
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -18,6 +26,7 @@ export default class ClassifyResult extends React.Component {
 
   render() {
     if (this.state.loading) {
+      // Display spinner for loading classification.
       return <div>
         <div className="text-center p-0">
           <b>Loading</b>

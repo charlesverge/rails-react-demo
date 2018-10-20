@@ -1,6 +1,7 @@
-# Simple prediction module to make requests from tenser server https://www.tensorflow.org/serving/
-# The tokenizer, api call and prediction api could be moved to their
-# own classes to allow for better extensibility.
+# Simple prediction class to make requests from tensorflow server
+# For a more complex project the tokenizer, api call and prediction api
+# could be moved to their own classes to allow for easier extensibility
+# and handling of errors.
 module Predict
   class Api
     def initialize(model)
@@ -9,9 +10,9 @@ module Predict
       # Body of response
       @body = ''
       # Model requesting predictions from
-      @model = model
+      @model = model.gsub(/[^0-9a-z]/i, '').downcase
       # Url for model
-      @url = "http://localhost:8501/v1/models/default:predict"
+      @url = TENSOR_SERVER_URL
     end
 
     def predict(sentence)
@@ -34,20 +35,15 @@ module Predict
 
     def request_prediction(data)
       # Make rest api call to tensorflow server for prediction
-      begin
-        @body = ''
-        c = Curl::Easy.http_post(@url, JSON.pretty_generate(data)) do |curl|
-            curl.headers['Accept'] = 'application/json'
-            curl.headers['Content-Type'] = 'application/json'
-          end
-        @body = c.body_str
-        if not c.body_str
-          return nil
+      c = Curl::Easy.http_post("#{@url}#{@model}:predict", JSON.pretty_generate(data)) do |curl|
+          curl.headers['Accept'] = 'application/json'
+          curl.headers['Content-Type'] = 'application/json'
         end
-        return JSON.parse(c.body_str)
-      rescue
+      @body = c.body_str
+      if not c.body_str
         return nil
       end
+      return JSON.parse(c.body_str)
     end
 
     def getbody()
