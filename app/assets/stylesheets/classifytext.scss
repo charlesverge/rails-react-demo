@@ -11,3 +11,23 @@
     height: 60px;
     animation: spin 2s linear infinite;
 }
+
+.svgContainer {
+    position: absolute;
+    z-index: -10;
+}
+
+.orange0 {
+    background-color:#fcb941;    
+}
+
+.purple0 {
+    background-color: #aea8d3;
+}
+
+.green0 {
+    background-color: #86e2d5;
+}
+.green1 {
+    background-color: #87d37c;
+}
